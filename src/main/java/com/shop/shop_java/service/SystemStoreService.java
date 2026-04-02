@@ -1,0 +1,7 @@
+package com.shop.shop_java.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.shop.shop_java.entity.SystemStore;
+
+public interface SystemStoreService extends IService<SystemStore> {
+}
