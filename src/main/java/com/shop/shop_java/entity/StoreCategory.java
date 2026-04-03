@@ -23,6 +23,7 @@ public class StoreCategory {
     
     private Integer sort; // 排序
     
+        @com.baomidou.mybatisplus.annotation.TableField("`group`")
     private Integer group; // 分类类型
     
     private String other; // 其他参数
