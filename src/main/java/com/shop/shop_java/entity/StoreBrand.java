@@ -6,10 +6,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("eb_system_config")
-public class SystemConfig {
+@TableName("eb_store_brand")
+public class StoreBrand {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String menuName;
-    private String value;
+    private String brandName;
+    private Integer pid;
+    private String fid;
+    private Integer storeId;
+    private Integer sort;
+    private Integer isShow;
+    private Integer isDel;
+    private Integer addTime;
 }

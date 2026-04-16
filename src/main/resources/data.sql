@@ -61,3 +61,41 @@ INSERT INTO eb_system_menus (pid, menu_name, icon, path, type, is_show) VALUES
 (0, '系统设置', 'Setting', '/system', 1, 1),
 (2, '角色管理', '', '/role', 2, 1),
 (2, '菜单管理', '', '/menu', 2, 1);
+
+-- Brand Mock Data
+INSERT INTO eb_store_brand (brand_name, pid, fid, store_id, sort, is_show, is_del, add_time) VALUES
+('apple', 0, '', 0, 0, 1, 0, UNIX_TIMESTAMP()),
+('华为', 0, '', 0, 0, 1, 0, UNIX_TIMESTAMP()),
+('小米', 0, '', 0, 0, 1, 0, UNIX_TIMESTAMP());
+
+-- Unit Mock Data
+INSERT INTO eb_store_product_unit (type, relation_id, name, sort, status, is_del, add_time) VALUES
+(0, 0, '箱', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '袋', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '斤', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '瓶', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '只', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '个', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '桶', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '升', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '盒', 0, 1, 0, UNIX_TIMESTAMP()),
+(0, 0, '套', 0, 1, 0, UNIX_TIMESTAMP());
+
+-- Ensure Mock Data
+INSERT INTO eb_store_product_ensure (type, relation_id, name, image, `desc`, sort, status, add_time) VALUES
+(0, 0, '正品保障', 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png', '官方正品，假一赔十', 0, 1, UNIX_TIMESTAMP()),
+(0, 0, '极速退款', 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png', '售后问题，快速处理', 0, 1, UNIX_TIMESTAMP());
+
+-- Rule Mock Data
+INSERT INTO eb_store_product_rule (type, relation_id, rule_name, rule_value) VALUES
+(0, 0, '颜色', '红色,蓝色,黑色'),
+(0, 0, '容量', '128G,256G,512G');
+
+-- Product Category Mock Data
+INSERT INTO eb_store_product_category (pid, type, relation_id, cate_name, path, level, pic, big_pic, adv_pic, adv_link, sort, is_show, add_time) VALUES
+(0, 0, 0, '家用电器', '/0/', 1, '', '', '', '', 1, 1, UNIX_TIMESTAMP()),
+(0, 0, 0, '手机数码', '/0/', 1, '', '', '', '', 2, 1, UNIX_TIMESTAMP()),
+(1, 0, 0, '电视', '/0/1/', 2, '', '', '', '', 1, 1, UNIX_TIMESTAMP()),
+(1, 0, 0, '空调', '/0/1/', 2, '', '', '', '', 2, 1, UNIX_TIMESTAMP()),
+(2, 0, 0, '智能手机', '/0/2/', 2, '', '', '', '', 1, 1, UNIX_TIMESTAMP()),
+(2, 0, 0, '平板电脑', '/0/2/', 2, '', '', '', '', 2, 1, UNIX_TIMESTAMP());

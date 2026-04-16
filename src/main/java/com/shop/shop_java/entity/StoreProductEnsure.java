@@ -1,25 +1,23 @@
 package com.shop.shop_java.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
-@TableName("eb_store_product")
-public class StoreProduct {
+@TableName("eb_store_product_ensure")
+public class StoreProductEnsure {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String storeName;
-    private String keyword;
+    private Integer type;
+    private Integer relationId;
+    private String name;
     private String image;
-    private BigDecimal price;
-    private Integer sales;
-    private Integer stock;
+    @TableField("`desc`")
+    private String desc;
     private Integer sort;
-    private Integer isShow;
-    private Integer isDel;
+    private Integer status;
     private Integer addTime;
 }

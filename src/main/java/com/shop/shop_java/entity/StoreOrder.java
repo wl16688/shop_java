@@ -6,18 +6,25 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
-@TableName("store_order")
+@TableName("eb_store_order")
 public class StoreOrder {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String orderId;
-    private Integer orderType;
+    private String tradeNo;
+    private Integer type;
     private String realName;
+    private String userPhone;
+    private BigDecimal totalPrice;
     private BigDecimal payPrice;
+    private String payType;
     private Integer paid;
     private Integer status;
-    private Date addTime;
+    private String deliveryName;
+    private String deliveryId;
+    private String deliveryType;
+    private Integer addTime;
+    private Integer isDel;
 }

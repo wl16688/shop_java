@@ -8,6 +8,9 @@ import com.shop.shop_java.service.StoreProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/admin/store/product")
 public class StoreProductController {
@@ -19,20 +22,57 @@ public class StoreProductController {
     public Result<Page<StoreProduct>> list(@RequestParam(defaultValue = "1") Integer page,
                                            @RequestParam(defaultValue = "15") Integer limit,
                                            @RequestParam(required = false) String keyword,
-                                           @RequestParam(required = false) Integer isShow) {
+                                           @RequestParam(required = false) Integer isShow,
+                                           @RequestParam(required = false) Integer cateId,
+                                           @RequestParam(required = false) Integer type,
+                                           @RequestParam(required = false) String priceMin,
+                                           @RequestParam(required = false) String priceMax,
+                                           @RequestParam(required = false) String salesMin,
+                                           @RequestParam(required = false) String salesMax) {
         Page<StoreProduct> pageParam = new Page<>(page, limit);
         LambdaQueryWrapper<StoreProduct> wrapper = new LambdaQueryWrapper<>();
-        // 过滤掉已删除的
-        // wrapper.eq(StoreProduct::getIsDel, 0); 
         
+        wrapper.eq(StoreProduct::getIsDel, 0);
+
         if (keyword != null && !keyword.isEmpty()) {
-            wrapper.like(StoreProduct::getStoreName, keyword).or().like(StoreProduct::getKeyword, keyword);
+            wrapper.and(w -> w.like(StoreProduct::getStoreName, keyword).or().like(StoreProduct::getKeyword, keyword).or().eq(StoreProduct::getId, keyword));
         }
         if (isShow != null) {
             wrapper.eq(StoreProduct::getIsShow, isShow);
         }
+        
+        // 补充的高级搜索条件
+        if (priceMin != null && !priceMin.isEmpty()) {
+            wrapper.ge(StoreProduct::getPrice, priceMin);
+        }
+        if (priceMax != null && !priceMax.isEmpty()) {
+            wrapper.le(StoreProduct::getPrice, priceMax);
+        }
+        if (salesMin != null && !salesMin.isEmpty()) {
+            wrapper.ge(StoreProduct::getSales, salesMin);
+        }
+        if (salesMax != null && !salesMax.isEmpty()) {
+            wrapper.le(StoreProduct::getSales, salesMax);
+        }
+        
         wrapper.orderByDesc(StoreProduct::getId);
         return Result.success(storeProductService.page(pageParam, wrapper));
+    }
+    
+    @GetMapping("/headerStats")
+    public Result<Map<String, Long>> headerStats() {
+        Map<String, Long> stats = new HashMap<>();
+        
+        // 出售中
+        stats.put("selling", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 1)));
+        // 仓库中 (下架)
+        stats.put("warehouse", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 0)));
+        // 已售罄
+        stats.put("soldOut", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).le(StoreProduct::getStock, 0)));
+        // 回收站
+        stats.put("recycle", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 1)));
+        
+        return Result.success(stats);
     }
 
     @PostMapping("/save")
@@ -45,7 +85,11 @@ public class StoreProductController {
 
     @DeleteMapping("/delete/{id}")
     public Result<Boolean> delete(@PathVariable Integer id) {
-        // 通常是软删除，这里演示直接删除或可以改为软删除逻辑
-        return Result.success(storeProductService.removeById(id));
+        StoreProduct product = storeProductService.getById(id);
+        if (product != null) {
+            product.setIsDel(1); // 软删除，移入回收站
+            return Result.success(storeProductService.updateById(product));
+        }
+        return Result.success(true);
     }
 }

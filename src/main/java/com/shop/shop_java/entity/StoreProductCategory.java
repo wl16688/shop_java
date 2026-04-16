@@ -5,21 +5,22 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
-@TableName("eb_store_product")
-public class StoreProduct {
+@TableName("eb_store_product_category")
+public class StoreProductCategory {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String storeName;
-    private String keyword;
-    private String image;
-    private BigDecimal price;
-    private Integer sales;
-    private Integer stock;
+    private Integer pid;
+    private Integer type;
+    private Integer relationId;
+    private String cateName;
+    private String path;
+    private Integer level;
+    private String pic;
+    private String bigPic;
+    private String advPic;
+    private String advLink;
     private Integer sort;
     private Integer isShow;
-    private Integer isDel;
     private Integer addTime;
 }

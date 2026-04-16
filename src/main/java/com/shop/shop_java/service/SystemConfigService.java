@@ -4,6 +4,4 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.shop.shop_java.entity.SystemConfig;
 
 public interface SystemConfigService extends IService<SystemConfig> {
-    String getValueByKey(String menuName);
-    boolean saveOrUpdateValue(String menuName, String value);
 }

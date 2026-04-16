@@ -6,10 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("eb_system_config")
-public class SystemConfig {
+@TableName("eb_user_group")
+public class UserGroup {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String menuName;
-    private String value;
+    private String groupName;
 }

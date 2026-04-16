@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS eb_system_config (
   required VARCHAR(255),
   value VARCHAR(255),
   info VARCHAR(255),
-  desc VARCHAR(255),
+  `desc` VARCHAR(255),
   sort INT,
   status INT
 );
@@ -371,4 +371,64 @@ CREATE TABLE IF NOT EXISTS eb_store_cart (
   is_pay INT,
   is_del INT,
   is_new INT
+);
+
+CREATE TABLE IF NOT EXISTS eb_store_brand (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  brand_name VARCHAR(255),
+  pid INT,
+  fid VARCHAR(255),
+  store_id INT,
+  sort INT,
+  is_show INT,
+  is_del INT,
+  add_time INT
+);
+
+CREATE TABLE IF NOT EXISTS eb_store_product_unit (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type INT,
+  relation_id INT,
+  name VARCHAR(255),
+  sort INT,
+  status INT,
+  is_del INT,
+  add_time INT
+);
+
+CREATE TABLE IF NOT EXISTS eb_store_product_ensure (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type INT,
+  relation_id INT,
+  name VARCHAR(255),
+  image VARCHAR(255),
+  `desc` VARCHAR(255),
+  sort INT,
+  status INT,
+  add_time INT
+);
+
+CREATE TABLE IF NOT EXISTS eb_store_product_rule (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type INT,
+  relation_id INT,
+  rule_name VARCHAR(255),
+  rule_value VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS eb_store_product_category (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pid INT,
+  type INT,
+  relation_id INT,
+  cate_name VARCHAR(255),
+  path VARCHAR(255),
+  level INT,
+  pic VARCHAR(255),
+  big_pic VARCHAR(255),
+  adv_pic VARCHAR(255),
+  adv_link VARCHAR(255),
+  sort INT,
+  is_show INT,
+  add_time INT
 );
