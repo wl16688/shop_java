@@ -21,5 +21,14 @@ public class StoreProduct {
     private Integer sort;
     private Integer isShow;
     private Integer isDel;
+    private Integer isVerify;
+    private Integer isSold;
+    private Integer isPolice;
+    private String cateId;
+    private Integer brandId;
+    private String unitName;
+    private String code;
+    private String barCode;
+    private String sliderImage;
     private Integer addTime;
 }

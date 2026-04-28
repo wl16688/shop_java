@@ -382,6 +382,15 @@ CREATE TABLE IF NOT EXISTS eb_store_brand (
   sort INT,
   is_show INT,
   is_del INT,
+  is_verify INT DEFAULT 1,
+  is_sold INT DEFAULT 0,
+  is_police INT DEFAULT 0,
+  cate_id VARCHAR(255) DEFAULT '',
+  brand_id INT DEFAULT 0,
+  unit_name VARCHAR(255) DEFAULT '',
+  code VARCHAR(255) DEFAULT '',
+  bar_code VARCHAR(255) DEFAULT '',
+  slider_image VARCHAR(1000) DEFAULT '',
   add_time INT
 );
 

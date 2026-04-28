@@ -22,9 +22,9 @@ public class StoreProductController {
     public Result<Page<StoreProduct>> list(@RequestParam(defaultValue = "1") Integer page,
                                            @RequestParam(defaultValue = "15") Integer limit,
                                            @RequestParam(required = false) String keyword,
-                                           @RequestParam(required = false) String tabStatus,
-                                           @RequestParam(required = false) Integer cateId,
                                            @RequestParam(required = false) Integer type,
+                                           @RequestParam(required = false) Integer cateId,
+                                           @RequestParam(required = false) Integer productType,
                                            @RequestParam(required = false) String priceMin,
                                            @RequestParam(required = false) String priceMax,
                                            @RequestParam(required = false) String salesMin,
@@ -32,62 +32,85 @@ public class StoreProductController {
         Page<StoreProduct> pageParam = new Page<>(page, limit);
         LambdaQueryWrapper<StoreProduct> wrapper = new LambdaQueryWrapper<>();
         
-        if ("recycle".equals(tabStatus)) {
-            wrapper.eq(StoreProduct::getIsDel, 1);
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(q -> q.like(StoreProduct::getStoreName, keyword).or().like(StoreProduct::getKeyword, keyword).or().eq(StoreProduct::getId, keyword));
+        }
+        if (cateId != null) wrapper.eq(StoreProduct::getCateId, String.valueOf(cateId));
+        if (priceMin != null && !priceMin.isEmpty()) wrapper.ge(StoreProduct::getPrice, new java.math.BigDecimal(priceMin));
+        if (priceMax != null && !priceMax.isEmpty()) wrapper.le(StoreProduct::getPrice, new java.math.BigDecimal(priceMax));
+        if (salesMin != null && !salesMin.isEmpty()) wrapper.ge(StoreProduct::getSales, Integer.parseInt(salesMin));
+        if (salesMax != null && !salesMax.isEmpty()) wrapper.le(StoreProduct::getSales, Integer.parseInt(salesMax));
+        
+        if (type != null) {
+            if (type == 6) {
+                wrapper.eq(StoreProduct::getIsDel, 1);
+            } else {
+                wrapper.eq(StoreProduct::getIsDel, 0);
+                if (type == 1) {
+                    wrapper.eq(StoreProduct::getIsShow, 1).eq(StoreProduct::getIsVerify, 1);
+                } else if (type == 2) {
+                    wrapper.eq(StoreProduct::getIsShow, 0).eq(StoreProduct::getIsVerify, 1);
+                } else if (type == 4) {
+                    wrapper.eq(StoreProduct::getIsVerify, 1).and(w -> w.eq(StoreProduct::getIsSold, 1).or().le(StoreProduct::getStock, 0));
+                } else if (type == 5) {
+                    wrapper.eq(StoreProduct::getIsShow, 1).eq(StoreProduct::getIsVerify, 1).eq(StoreProduct::getIsPolice, 1).gt(StoreProduct::getStock, 0);
+                } else if (type == 0) {
+                    wrapper.eq(StoreProduct::getIsVerify, 0);
+                } else if (type == -1) {
+                    wrapper.eq(StoreProduct::getIsVerify, -1);
+                } else if (type == -2) {
+                    wrapper.eq(StoreProduct::getIsVerify, -2);
+                }
+            }
         } else {
             wrapper.eq(StoreProduct::getIsDel, 0);
-            if ("selling".equals(tabStatus)) {
-                wrapper.eq(StoreProduct::getIsShow, 1);
-            } else if ("warehouse".equals(tabStatus)) {
-                wrapper.eq(StoreProduct::getIsShow, 0);
-            } else if ("soldOut".equals(tabStatus)) {
-                wrapper.le(StoreProduct::getStock, 0);
-            }
-        }
-        
-        if (keyword != null && !keyword.isEmpty()) {
-            wrapper.and(w -> w.like(StoreProduct::getStoreName, keyword).or().like(StoreProduct::getKeyword, keyword).or().eq(StoreProduct::getId, keyword));
-        }
-        
-        // 补充的高级搜索条件
-        if (priceMin != null && !priceMin.isEmpty()) {
-            wrapper.ge(StoreProduct::getPrice, priceMin);
-        }
-        if (priceMax != null && !priceMax.isEmpty()) {
-            wrapper.le(StoreProduct::getPrice, priceMax);
-        }
-        if (salesMin != null && !salesMin.isEmpty()) {
-            wrapper.ge(StoreProduct::getSales, salesMin);
-        }
-        if (salesMax != null && !salesMax.isEmpty()) {
-            wrapper.le(StoreProduct::getSales, salesMax);
         }
         
         wrapper.orderByDesc(StoreProduct::getId);
         return Result.success(storeProductService.page(pageParam, wrapper));
     }
     
-    @GetMapping("/headerStats")
-    public Result<Map<String, Long>> headerStats() {
-        Map<String, Long> stats = new HashMap<>();
+    @GetMapping("/type_header")
+    public Result<Map<String, Object>> headerStats(@RequestParam(required = false) String keyword,
+                                                   @RequestParam(required = false) Integer cateId,
+                                                   @RequestParam(required = false) Integer productType,
+                                                   @RequestParam(required = false) String priceMin,
+                                                   @RequestParam(required = false) String priceMax,
+                                                   @RequestParam(required = false) String salesMin,
+                                                   @RequestParam(required = false) String salesMax) {
+        Map<String, Object> stats = new HashMap<>();
+
+        // Helper to create base wrapper with common filters
+        java.util.function.Supplier<LambdaQueryWrapper<StoreProduct>> baseWrapper = () -> {
+            LambdaQueryWrapper<StoreProduct> w = new LambdaQueryWrapper<>();
+            if (keyword != null && !keyword.isEmpty()) {
+                w.and(q -> q.like(StoreProduct::getStoreName, keyword).or().like(StoreProduct::getKeyword, keyword).or().eq(StoreProduct::getId, keyword));
+            }
+            if (cateId != null) w.eq(StoreProduct::getCateId, String.valueOf(cateId));
+            if (priceMin != null && !priceMin.isEmpty()) w.ge(StoreProduct::getPrice, new java.math.BigDecimal(priceMin));
+            if (priceMax != null && !priceMax.isEmpty()) w.le(StoreProduct::getPrice, new java.math.BigDecimal(priceMax));
+            if (salesMin != null && !salesMin.isEmpty()) w.ge(StoreProduct::getSales, Integer.parseInt(salesMin));
+            if (salesMax != null && !salesMax.isEmpty()) w.le(StoreProduct::getSales, Integer.parseInt(salesMax));
+            return w;
+        };
         
-        // 出售中
-        stats.put("selling", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 1)));
-        // 仓库中 (下架)
-        stats.put("warehouse", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 0)));
-        // 已售罄
-        stats.put("soldOut", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).le(StoreProduct::getStock, 0)));
-        // 库存预警
-        stats.put("alert", 0L);
-        // 回收站
-        stats.put("recycle", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 1)));
-        // 待审核
-        stats.put("pending", 0L);
-        // 审核未通过
-        stats.put("rejected", 0L);
-        // 强制下架
-        stats.put("forced", 0L);
-        
+        // 销售中: is_show = 1, is_del = 0, is_verify = 1
+        stats.put("selling", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 1).eq(StoreProduct::getIsVerify, 1)));
+        // 仓库中: is_show = 0, is_del = 0, is_verify = 1
+        stats.put("warehouse", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 0).eq(StoreProduct::getIsVerify, 1)));
+        // 已售罄: is_del = 0, is_verify = 1, (is_sold = 1 or stock <= 0)
+        stats.put("soldOut", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsVerify, 1).and(w -> w.eq(StoreProduct::getIsSold, 1).or().le(StoreProduct::getStock, 0))));
+        // 库存预警: is_show = 1, is_del = 0, is_verify = 1, is_police = 1, stock > 0
+        stats.put("alert", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 1).eq(StoreProduct::getIsVerify, 1).eq(StoreProduct::getIsPolice, 1).gt(StoreProduct::getStock, 0)));
+        // 回收站: is_del = 1
+        stats.put("recycle", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 1)));
+        // 待审核: is_verify = 0, is_del = 0
+        stats.put("pending", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsVerify, 0)));
+        // 审核未通过: is_verify = -1, is_del = 0
+        stats.put("rejected", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsVerify, -1)));
+        // 强制下架: is_verify = -2, is_del = 0
+        stats.put("forced", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsVerify, -2)));
+
         return Result.success(stats);
     }
 

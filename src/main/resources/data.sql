@@ -17,12 +17,13 @@ INSERT INTO eb_category (pid, type, relation_id, owner_id, name, sort, `group`, 
 (2, 0, 0, 0, '平板电脑', 2, 2, '', 1);
 
 -- Product Mock Data
-INSERT INTO eb_store_product (pid, type, product_type, relation_id, mer_id, image, store_name, price, sales, stock, is_show) VALUES
-(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i4/O1CN013pY1G41nO9qE8T2xN_!!6000000005076-0-tps-800-800.jpg', '小米14 Pro 徕卡光学镜头 骁龙8Gen3 钛金属特别版', '4999.00', 1205, 500, 1),
-(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i3/O1CN0181T2V61H1w3eL1n5o_!!6000000000698-0-tps-800-800.jpg', 'Apple iPhone 15 Pro Max 256GB 原色钛金属', '9999.00', 850, 200, 1),
-(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i1/O1CN01Z7z6qD1l1w4p5N9T6_!!6000000004758-0-tps-800-800.jpg', '华为 HUAWEI Mate 60 Pro 麒麟9000S 雅川青', '6999.00', 3021, 50, 1),
-(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i2/O1CN01Y8V6oT1K1w4n5N9T6_!!6000000001108-0-tps-800-800.jpg', '索尼（SONY）65英寸 4K 智能电视 XR-65X90L', '7499.00', 156, 30, 0),
-(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i4/O1CN01x8V6oT1J1w4n5N9T6_!!6000000001008-0-tps-800-800.jpg', '格力（GREE）1.5匹 云佳 新一级能效 变频空调', '2999.00', 8900, 1200, 1);
+INSERT INTO eb_store_product (pid, type, product_type, relation_id, mer_id, image, store_name, price, sales, stock, is_show, is_del, is_verify, is_sold) VALUES
+(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i4/O1CN013pY1G41nO9qE8T2xN_!!6000000005076-0-tps-800-800.jpg', '小米14 Pro 徕卡光学镜头 骁龙8Gen3 钛金属特别版', '4999.00', 1205, 500, 1, 0, 1, 0),
+(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i3/O1CN0181T2V61H1w3eL1n5o_!!6000000000698-0-tps-800-800.jpg', 'Apple iPhone 15 Pro Max 256GB 原色钛金属', '9999.00', 850, 200, 1, 0, 1, 0),
+(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i1/O1CN01Z7z6qD1l1w4p5N9T6_!!6000000004758-0-tps-800-800.jpg', '华为 HUAWEI Mate 60 Pro 麒麟9000S 雅川青', '6999.00', 3021, 50, 1, 0, 1, 0),
+(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i2/O1CN01Y8V6oT1K1w4n5N9T6_!!6000000001108-0-tps-800-800.jpg', '索尼（SONY）65英寸 4K 智能电视 XR-65X90L', '7499.00', 156, 30, 0, 0, 1, 0),
+(0, 0, 0, 0, 0, 'https://img.alicdn.com/imgextra/i4/O1CN01x8V6oT1J1w4n5N9T6_!!6000000001008-0-tps-800-800.jpg', '格力（GREE）1.5匹 云佳 新一级能效 变频空调', '2999.00', 8900, 1200, 1, 0, 1, 0),
+(0, 0, 0, 0, 0, '', '公社体验票', '199.00', 0, 10000, 0, 1, 1, 0);
 
 -- Order Mock Data
 INSERT INTO eb_store_order (order_id, real_name, user_phone, total_price, pay_price, pay_type, status) VALUES
