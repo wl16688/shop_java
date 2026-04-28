@@ -22,6 +22,18 @@ public class StoreProductController {
     @Autowired
     private StoreProductService storeProductService;
 
+    // 用于统计接口的1分钟缓存结构
+    private static class CacheData {
+        Map<String, Object> data;
+        long expireTime;
+        CacheData(Map<String, Object> data, long expireTime) {
+            this.data = data;
+            this.expireTime = expireTime;
+        }
+    }
+    // 缓存容器
+    private final java.util.concurrent.ConcurrentHashMap<String, CacheData> statsCache = new java.util.concurrent.ConcurrentHashMap<>();
+
     /**
      * 获取商品分页列表
      * 核心逻辑：基于前端传入的 `type` 参数，结合多重字段状态（如是否删除、审核状态、库存等）返回对应分类数据。
@@ -108,14 +120,24 @@ public class StoreProductController {
      *
      * @return 包含各分类对应数量的 Map (如：selling: 10, warehouse: 5...)
      */
-    @GetMapping("/type_header")
-    public Result<Map<String, Object>> headerStats(@RequestParam(required = false) String keyword,
-                                                   @RequestParam(required = false) Integer cateId,
-                                                   @RequestParam(required = false) Integer productType,
-                                                   @RequestParam(required = false) String priceMin,
-                                                   @RequestParam(required = false) String priceMax,
-                                                   @RequestParam(required = false) String salesMin,
-                                                   @RequestParam(required = false) String salesMax) {
+    @GetMapping("/status_statistics")
+    public Result<Map<String, Object>> statusStatistics(@RequestParam(required = false) String keyword,
+                                                        @RequestParam(required = false) Integer cateId,
+                                                        @RequestParam(required = false) Integer productType,
+                                                        @RequestParam(required = false) String priceMin,
+                                                        @RequestParam(required = false) String priceMax,
+                                                        @RequestParam(required = false) String salesMin,
+                                                        @RequestParam(required = false) String salesMax) {
+        
+        // 缓存键：组合所有查询参数
+        String cacheKey = String.format("%s_%s_%s_%s_%s_%s_%s", keyword, cateId, productType, priceMin, priceMax, salesMin, salesMax);
+        CacheData cache = statsCache.get(cacheKey);
+        
+        // 1分钟内查询使用缓存
+        if (cache != null && System.currentTimeMillis() < cache.expireTime) {
+            return Result.success(cache.data);
+        }
+
         Map<String, Object> stats = new HashMap<>();
 
         // 提取公共过滤条件构造器 (公用搜索条件：关键词、分类、价格范围、销量范围等)
@@ -149,6 +171,9 @@ public class StoreProductController {
         stats.put("rejected", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsVerify, -1)));
         // 强制下架: is_verify = -2, is_del = 0
         stats.put("forced", storeProductService.count(baseWrapper.get().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsVerify, -2)));
+
+        // 存入缓存，有效期1分钟
+        statsCache.put(cacheKey, new CacheData(stats, System.currentTimeMillis() + 60 * 1000));
 
         return Result.success(stats);
     }
