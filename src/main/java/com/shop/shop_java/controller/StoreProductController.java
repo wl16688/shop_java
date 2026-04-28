@@ -40,14 +40,15 @@ public class StoreProductController {
      *
      * @param page        当前页码
      * @param limit       每页条数
-     * @param keyword     商品搜索关键词（名称/关键字/ID）
+     * @param storeName   商品搜索关键词（对应 PHP 的 store_name，结合 field_key 使用）
+     * @param fieldKey    搜索类型：store_name(商品名称), product_id(商品ID), all(全部)
      * @param type        商品状态分类页签（1=销售中, 2=仓库中, 4=已售罄, 5=库存预警, 6=回收站, 0=待审核, -1=审核未通过, -2=强制下架）
      * @param cateId      商品分类ID
      * @param productType 商品类型
-     * @param priceMin    最低售价
-     * @param priceMax    最高售价
-     * @param salesMin    最低销量
-     * @param salesMax    最高销量
+     * @param priceRange  售价区间，格式如 "10-100" 或 "10-" 或 "-100"
+     * @param salesRange  销量区间，格式如 "10-100"
+     * @param stockRange  库存区间，格式如 "10-100"
+     * @param supplierId  供应商ID
      * @return 分页列表数据
      */
     @GetMapping("/list")
@@ -107,10 +108,18 @@ public class StoreProductController {
     }
     
     /**
-     * 获取商品各分类(Tab)状态数量统计
-     * 针对所有 `type` 的查询，提取公共搜索条件以保证筛选时所有页签数值准确联动。
+     * 提取公共过滤条件构造器 (公用搜索条件：关键词、分类、价格范围、销量范围等)
+     * 这样在计算各个状态数量以及获取列表时，都会自动叠加这些搜索限制，保证查询与统计的一致性。
      *
-     * @return 包含各分类对应数量的 Map (如：selling: 10, warehouse: 5...)
+     * @param storeName   商品搜索关键词
+     * @param fieldKey    搜索类型
+     * @param cateId      分类ID
+     * @param productType 商品类型
+     * @param priceRange  价格区间
+     * @param salesRange  销量区间
+     * @param stockRange  库存区间
+     * @param supplierId  供应商ID
+     * @return LambdaQueryWrapper<StoreProduct> 查询包装器
      */
     private LambdaQueryWrapper<StoreProduct> buildBaseQuery(String storeName, String fieldKey, Integer cateId, Integer productType, String priceRange, String salesRange, String stockRange, Integer supplierId) {
         LambdaQueryWrapper<StoreProduct> w = new LambdaQueryWrapper<>();
@@ -142,6 +151,14 @@ public class StoreProductController {
         return w;
     }
 
+    /**
+     * 辅助方法：解析区间字符串并应用范围过滤条件
+     * 
+     * @param w         查询包装器
+     * @param column    对应的字段属性函数
+     * @param rangeStr  前端传来的区间字符串（例： "10-100", "10-", "-100"）
+     * @param isDecimal 是否为小数类型字段
+     */
     private <T> void applyRange(LambdaQueryWrapper<StoreProduct> w, com.baomidou.mybatisplus.core.toolkit.support.SFunction<StoreProduct, ?> column, String rangeStr, boolean isDecimal) {
         if (rangeStr != null && rangeStr.contains("-")) {
             String[] parts = rangeStr.split("-", 2);
@@ -158,6 +175,21 @@ public class StoreProductController {
         }
     }
 
+    /**
+     * 获取商品各分类(Tab)状态数量统计
+     * 针对所有 `type` 的查询，提取公共搜索条件以保证筛选时所有页签数值准确联动。
+     * 且附带一分钟缓存控制，减轻多次复杂查询造成的数据库压力。
+     *
+     * @param storeName   商品搜索关键词（对应 PHP 的 store_name，结合 field_key 使用）
+     * @param fieldKey    搜索类型：store_name(商品名称), product_id(商品ID), all(全部)
+     * @param cateId      商品分类ID
+     * @param productType 商品类型
+     * @param priceRange  售价区间，格式如 "10-100" 或 "10-" 或 "-100"
+     * @param salesRange  销量区间，格式如 "10-100"
+     * @param stockRange  库存区间，格式如 "10-100"
+     * @param supplierId  供应商ID
+     * @return 包含各分类对应数量的 Map (如：selling: 10, warehouse: 5...)
+     */
     @GetMapping("/status_statistics")
     public Result<Map<String, Object>> statusStatistics(@RequestParam(required = false, name = "store_name") String storeName,
                                                         @RequestParam(required = false, name = "field_key") String fieldKey,
