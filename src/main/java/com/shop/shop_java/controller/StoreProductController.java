@@ -69,8 +69,16 @@ public class StoreProductController {
         stats.put("warehouse", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 0)));
         // 已售罄
         stats.put("soldOut", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 0).le(StoreProduct::getStock, 0)));
+        // 库存预警
+        stats.put("alert", 0L);
         // 回收站
         stats.put("recycle", storeProductService.count(new LambdaQueryWrapper<StoreProduct>().eq(StoreProduct::getIsDel, 1)));
+        // 待审核
+        stats.put("pending", 0L);
+        // 审核未通过
+        stats.put("rejected", 0L);
+        // 强制下架
+        stats.put("forced", 0L);
         
         return Result.success(stats);
     }
