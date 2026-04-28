@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS eb_system_store (
 
 CREATE TABLE IF NOT EXISTS eb_store_product (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  pid INT,
+  pid INT DEFAULT 0,
   type INT,
   product_type INT,
   relation_id INT,

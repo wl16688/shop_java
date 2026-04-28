@@ -99,8 +99,8 @@ public class StoreProductController {
                 }
             }
         } else {
-            // 默认查未被删除的商品
-            wrapper.eq(StoreProduct::getIsDel, 0);
+            // 如果 type 为空，默认表现和 PHP 完全对齐，默认查询 "出售中" (type=1) 的逻辑
+            wrapper.eq(StoreProduct::getIsDel, 0).eq(StoreProduct::getIsShow, 1).eq(StoreProduct::getIsVerify, 1);
         }
         
         wrapper.orderByDesc(StoreProduct::getId);
@@ -126,8 +126,7 @@ public class StoreProductController {
         
         // 处理默认supplierId=0时的平台商品过滤
         if (supplierId == null || supplierId == 0) {
-            // 注意：实体中暂无pid，先根据实际需要忽略或使用其他字段代替
-            // 若数据库有 pid，可在此补充：w.eq(StoreProduct::getPid, 0);
+            w.eq(StoreProduct::getPid, 0);
         }
 
         if (storeName != null && !storeName.isEmpty()) {

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public class StoreProduct {
     @TableId(type = IdType.AUTO)
     private Integer id; // 商品ID
+    private Integer pid; // 关联平台商品ID
     private String storeName; // 商品名称
     private String keyword; // 商品关键字
     private String image; // 商品主图
