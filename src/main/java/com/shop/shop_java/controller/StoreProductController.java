@@ -124,8 +124,14 @@ public class StoreProductController {
     private LambdaQueryWrapper<StoreProduct> buildBaseQuery(String storeName, String fieldKey, Integer cateId, Integer productType, String priceRange, String salesRange, String stockRange, Integer supplierId) {
         LambdaQueryWrapper<StoreProduct> w = new LambdaQueryWrapper<>();
         
-        // 处理默认supplierId=0时的平台商品过滤
-        if (supplierId == null || supplierId == 0) {
+        // PHP 侧默认会附加 mer_id=0，用于筛选平台商品；这里保持一致
+        w.eq(StoreProduct::getMerId, 0);
+
+        // PHP 侧：传 supplier_id 时查询供应商商品，否则默认 pid=0（只查主商品）
+        if (supplierId != null && supplierId > 0) {
+            w.eq(StoreProduct::getRelationId, supplierId);
+            w.eq(StoreProduct::getType, 2);
+        } else {
             w.eq(StoreProduct::getPid, 0);
         }
 
@@ -140,7 +146,7 @@ public class StoreProductController {
         }
         
         if (cateId != null) w.eq(StoreProduct::getCateId, String.valueOf(cateId));
-        // 注意：实体中暂无 productType 字段，如果数据库无此字段，可暂时忽略
+        if (productType != null) w.eq(StoreProduct::getProductType, productType);
 
         // 处理 range，格式如 "10-100" 或 "10-" 或 "-100"
         applyRange(w, StoreProduct::getPrice, priceRange, true);

@@ -13,6 +13,10 @@ public class StoreProduct {
     @TableId(type = IdType.AUTO)
     private Integer id; // 商品ID
     private Integer pid; // 关联平台商品ID
+    private Integer type; // 商品归属：0=平台，1=门店，2=供应商
+    private Integer productType; // 商品类型：0=普通商品，1=卡密，2=优惠券，3=虚拟商品，4=次卡商品
+    private Integer relationId; // 关联门店/供应商ID
+    private Integer merId; // 商户ID(平台默认0)
     private String storeName; // 商品名称
     private String keyword; // 商品关键字
     private String image; // 商品主图
