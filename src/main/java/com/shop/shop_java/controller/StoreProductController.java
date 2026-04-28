@@ -22,7 +22,7 @@ public class StoreProductController {
     public Result<Page<StoreProduct>> list(@RequestParam(defaultValue = "1") Integer page,
                                            @RequestParam(defaultValue = "15") Integer limit,
                                            @RequestParam(required = false) String keyword,
-                                           @RequestParam(required = false) Integer isShow,
+                                           @RequestParam(required = false) String tabStatus,
                                            @RequestParam(required = false) Integer cateId,
                                            @RequestParam(required = false) Integer type,
                                            @RequestParam(required = false) String priceMin,
@@ -32,13 +32,21 @@ public class StoreProductController {
         Page<StoreProduct> pageParam = new Page<>(page, limit);
         LambdaQueryWrapper<StoreProduct> wrapper = new LambdaQueryWrapper<>();
         
-        wrapper.eq(StoreProduct::getIsDel, 0);
-
+        if ("recycle".equals(tabStatus)) {
+            wrapper.eq(StoreProduct::getIsDel, 1);
+        } else {
+            wrapper.eq(StoreProduct::getIsDel, 0);
+            if ("selling".equals(tabStatus)) {
+                wrapper.eq(StoreProduct::getIsShow, 1);
+            } else if ("warehouse".equals(tabStatus)) {
+                wrapper.eq(StoreProduct::getIsShow, 0);
+            } else if ("soldOut".equals(tabStatus)) {
+                wrapper.le(StoreProduct::getStock, 0);
+            }
+        }
+        
         if (keyword != null && !keyword.isEmpty()) {
             wrapper.and(w -> w.like(StoreProduct::getStoreName, keyword).or().like(StoreProduct::getKeyword, keyword).or().eq(StoreProduct::getId, keyword));
-        }
-        if (isShow != null) {
-            wrapper.eq(StoreProduct::getIsShow, isShow);
         }
         
         // 补充的高级搜索条件
