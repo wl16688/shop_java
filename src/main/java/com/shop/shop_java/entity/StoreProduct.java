@@ -15,70 +15,136 @@ public class StoreProduct {
     private Integer id; // 商品ID
     private Integer pid; // 关联平台商品ID
     private Integer type; // 商品归属：0=平台，1=门店，2=供应商
+    @TableField("product_type")
     private Integer productType; // 商品类型：0=普通商品，1=卡密，2=优惠券，3=虚拟商品，4=次卡商品
+    @TableField("relation_id")
     private Integer relationId; // 关联门店/供应商ID
+    @TableField("mer_id")
     private Integer merId; // 商户ID(平台默认0)
+    @TableField("store_name")
     private String storeName; // 商品名称
+    @TableField("store_info")
     private String storeInfo; // 商品简介
     @TableField(exist = false)
     private String description;
     private String keyword; // 商品关键字
     private String image; // 商品主图
+    @TableField("recommend_image")
     private String recommendImage;
+    @TableField("slider_image")
     private String sliderImage; // 商品轮播图(多张图的JSON数组或逗号分隔)
     private BigDecimal price; // 商品售价
+    @TableField("settle_price")
     private BigDecimal settlePrice;
+    @TableField("vip_price")
     private BigDecimal vipPrice;
+    @TableField("ot_price")
     private BigDecimal otPrice; // 商品市场价
     private BigDecimal cost; // 成本价
+    @TableField("delivery_type")
     private String deliveryType;
     private Integer freight;
     private BigDecimal postage;
+    @TableField("temp_id")
     private Integer tempId;
+    @TableField("is_postage")
     private Integer isPostage;
     private Integer sales; // 销量
     private Integer ficti; // 虚拟销量
     private Integer stock; // 库存
     private Integer sort; // 排序权重(越大越靠前)
+    @TableField("spec_type")
     private Integer specType; // 规格类型：0=单规格，1=多规格
     private String activity;
     private String spu;
+    @TableField("label_id")
     private String labelId;
+    @TableField("command_word")
     private String commandWord;
+    @TableField("recommend_list")
     private String recommendList;
+    @TableField("is_good")
+    private Integer isGood;
+    @TableField("min_qty")
+    private Integer minQty;
     private Integer collect; // 收藏数
+    @TableField("is_show")
     private Integer isShow; // 是否上架：0=下架(仓库中)，1=上架(销售中)
+    @TableField("is_del")
     private Integer isDel; // 是否删除：0=正常，1=已删除(放入回收站)
+    @TableField("is_verify")
     private Integer isVerify; // 审核状态：1=审核通过，0=待审核，-1=审核未通过，-2=强制下架
     private String refusal;
+    @TableField("is_sold")
     private Integer isSold; // 是否售罄：0=正常，1=已售罄
+    @TableField("is_police")
     private Integer isPolice; // 是否触发库存预警：0=正常，1=预警
+    @TableField("cate_id")
     private String cateId; // 商品分类ID(支持逗号分隔多个分类)
+    @TableField("brand_id")
     private Integer brandId; // 商品品牌ID
+    @TableField("brand_com")
     private String brandCom;
+    @TableField("unit_name")
     private String unitName; // 商品单位(如：件、个、瓶等)
     private String code; // 商品编码(商家自定义SKU等)
+    @TableField("bar_code")
     private String barCode; // 商品条形码(扫描码)
+    @TableField("add_time")
     private Integer addTime; // 添加时间(Unix时间戳)
+    @TableField("video_open")
     private Integer videoOpen;
+    @TableField("video_link")
     private String videoLink;
+    @TableField("is_vip_product")
     private Integer isVipProduct;
+    @TableField("is_channel_product")
     private Integer isChannelProduct;
+    @TableField("is_general_product")
     private Integer isGeneralProduct;
+    @TableField("is_presale_product")
     private Integer isPresaleProduct;
+    @TableField("presale_start_time")
     private Integer presaleStartTime;
+    @TableField("presale_end_time")
     private Integer presaleEndTime;
+    @TableField("presale_day")
     private Integer presaleDay;
+    @TableField("auto_on_time")
     private Integer autoOnTime;
+    @TableField("auto_off_time")
     private Integer autoOffTime;
+    @TableField("give_integral")
     private BigDecimal giveIntegral;
+    @TableField("is_vip")
     private Integer isVip;
+    @TableField("store_label_id")
     private String storeLabelId;
+    @TableField("ensure_id")
     private String ensureId;
     private String specs;
+    @TableField("specs_id")
     private Integer specsId;
+    @TableField("is_limit")
     private Integer isLimit;
+    @TableField("limit_type")
     private Integer limitType;
+    @TableField("limit_num")
     private Integer limitNum;
+    @TableField("is_support_refund")
     private Integer isSupportRefund;
+    @TableField("custom_form")
+    private String customForm;
+    @TableField("is_brokerage")
+    private Integer isBrokerage;
+    @TableField("brokerage_type")
+    private Integer brokerageType;
+    @TableField("level_type")
+    private Integer levelType;
+    @TableField("share_content")
+    private String shareContent;
+    @TableField("is_send_gift")
+    private Integer isSendGift;
+    @TableField("default_sku")
+    private String defaultSku;
 }
