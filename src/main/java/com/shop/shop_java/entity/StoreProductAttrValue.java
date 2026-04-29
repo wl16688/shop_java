@@ -43,5 +43,7 @@ public class StoreProductAttrValue {
     @TableField("is_show")
     private Integer isShow;
     private Integer sort;
+    @TableField("type")
+    private Integer type;
     private String code;
 }

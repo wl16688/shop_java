@@ -250,11 +250,12 @@ public class StoreProductController {
     }
 
     @PostMapping("/save")
-    public Result<Boolean> save(@RequestBody StoreProduct product) {
+    public Result<Integer> save(@RequestBody StoreProduct product) {
         if (product.getAddTime() == null) {
             product.setAddTime((int) (System.currentTimeMillis() / 1000));
         }
-        return Result.success(storeProductService.saveOrUpdate(product));
+        storeProductService.saveOrUpdate(product);
+        return Result.success(product.getId());
     }
 
     @DeleteMapping("/delete/{id}")

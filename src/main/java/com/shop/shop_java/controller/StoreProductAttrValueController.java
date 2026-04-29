@@ -25,13 +25,17 @@ public class StoreProductAttrValueController {
                                                     @RequestParam(defaultValue = "10") Integer limit) {
         LambdaQueryWrapper<StoreProductAttrValue> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(StoreProductAttrValue::getProductId, product_id);
+        wrapper.eq(StoreProductAttrValue::getType, 0);
         wrapper.orderByDesc(StoreProductAttrValue::getId);
         Page<StoreProductAttrValue> pageParam = new Page<>(page, limit);
         return Result.success(attrValueService.page(pageParam, wrapper));
     }
 
     @PostMapping("/save")
-    public Result<Boolean> save(@RequestBody StoreProductAttrValue attrValue) {
-        return Result.success(attrValueService.saveOrUpdate(attrValue));
+    public Result<Boolean> save(@RequestBody java.util.List<StoreProductAttrValue> attrValues) {
+        if (attrValues != null && !attrValues.isEmpty()) {
+            attrValueService.saveOrUpdateBatch(attrValues);
+        }
+        return Result.success(true);
     }
 }
