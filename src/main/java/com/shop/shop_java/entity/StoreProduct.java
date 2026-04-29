@@ -19,6 +19,7 @@ public class StoreProduct {
     private Integer merId; // 商户ID(平台默认0)
     private String storeName; // 商品名称
     private String storeInfo; // 商品简介
+    private String description;
     private String keyword; // 商品关键字
     private String image; // 商品主图
     private BigDecimal price; // 商品售价
