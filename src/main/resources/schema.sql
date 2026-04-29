@@ -115,7 +115,6 @@ CREATE TABLE IF NOT EXISTS eb_store_product (
   level_type INT,
   share_content VARCHAR(500),
   is_send_gift INT,
-  coupon_ids VARCHAR(255),
   sort INT,
   sales INT,
   stock INT,

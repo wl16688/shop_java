@@ -145,8 +145,6 @@ public class StoreProduct {
     private String shareContent;
     @TableField("is_send_gift")
     private Integer isSendGift;
-    @TableField("coupon_ids")
-    private String couponIds;
     @TableField("default_sku")
     private String defaultSku;
 }
